@@ -6,13 +6,19 @@ import {
    TouchableOpacity,
    Animated
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import tw from 'tailwind-react-native-classnames';
-
 import { icons, SIZES, COLORS } from '../contants';
 
-const FoodInformation = ({ restaurant }: any) => {
-   const navigation = useNavigation<any>();
+const FoodInformation = ({ restaurant, scrollX, editOrder, orderItems }: any) => {
+
+   function getOrderQty(menuId: any) {
+      let orderItem: any = orderItems.filter((a: any) => a.menuId == menuId);
+
+      if (orderItem.length > 0) {
+         return orderItem[0].qty;
+      }
+
+      return 0;
+   }
 
    return (
       <Animated.ScrollView
@@ -21,6 +27,9 @@ const FoodInformation = ({ restaurant }: any) => {
          scrollEventThrottle={16}
          snapToAlignment="center"
          showsHorizontalScrollIndicator={false}
+         onScroll={Animated.event([
+            { nativeEvent: { contentOffset: { x: scrollX } } }
+         ], { useNativeDriver: false })}
       >
          {
             restaurant?.menu.map((item: any, index: number) => (
@@ -28,7 +37,7 @@ const FoodInformation = ({ restaurant }: any) => {
                   key={"menu-" + index}
                   style={{ alignItems: 'center' }}>
                   <View
-                     style={{ height: SIZES.height * 0.35 }}>
+                     style={{ height: '50%' }}>
                      <Image
                         source={item.photo}
                         resizeMode="cover"
@@ -56,8 +65,11 @@ const FoodInformation = ({ restaurant }: any) => {
                               alignItems: 'center',
                               borderBottomLeftRadius: 25,
                               borderTopLeftRadius: 25
-                           }}>
-                           <Text style={{ fontSize: 25 }}>-</Text>
+                           }}
+                           onPress={() => editOrder('-', item.menuId, item.price)}>
+                           <Text
+                              style={{ fontSize: 25 }}
+                           >-</Text>
                         </TouchableOpacity>
                         <View
                            style={{
@@ -66,7 +78,9 @@ const FoodInformation = ({ restaurant }: any) => {
                               alignItems: 'center',
                               justifyContent: 'center'
                            }}>
-                           <Text style={{ fontSize: 20 }}>5</Text>
+                           <Text style={{ fontSize: 20 }}>
+                              {getOrderQty(item.menuId)}
+                           </Text>
                         </View>
                         <TouchableOpacity
                            style={{
@@ -76,8 +90,11 @@ const FoodInformation = ({ restaurant }: any) => {
                               justifyContent: 'center',
                               borderBottomRightRadius: 25,
                               borderTopRightRadius: 25
-                           }}>
-                           <Text style={{ fontSize: 25 }}>+</Text>
+                           }}
+                           onPress={() => editOrder('+', item.menuId, item.price)}
+                        >
+                           <Text style={{ fontSize: 25 }}
+                           >+</Text>
                         </TouchableOpacity>
                      </View>
                   </View>
@@ -108,7 +125,7 @@ const FoodInformation = ({ restaurant }: any) => {
                   <View
                      style={{
                         flexDirection: 'row',
-                        marginTop: 10
+                        marginTop: 5
                      }}
                   >
                      <Image
