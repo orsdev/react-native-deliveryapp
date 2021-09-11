@@ -6,11 +6,13 @@ import {
    SafeAreaView
 } from 'react-native';
 import tw from 'tailwind-react-native-classnames';
-import Header from '../components/Header';
+import { useNavigation } from '@react-navigation/native';
+
+import Header from '../components/HomeHeader';
 import MainCategories from '../components/MainCategories';
 import RestaurantList from '../components/RestaurantList';
 
-import { icons, images, SIZES, COLORS } from '../contants';
+import { icons, images, SIZES } from '../contants';
 
 
 // price rating
@@ -304,6 +306,8 @@ const Home = () => {
    const [restaurants, setRestaurants] = React.useState(restaurantData)
    const [currentLocation, setCurrentLocation] = React.useState(initialCurrentLocation);
 
+   const navigation = useNavigation<any>();
+
    function onSelectCategory(category: any) {
       //filter restaurant
       let restaurantList = restaurantData.filter(a => a.categories.includes(category.id))
@@ -359,7 +363,10 @@ const Home = () => {
             renderItem={({ item }: any) => (
                <RestaurantList
                   item={item}
-                  // onPress={() => onSelectCategory(item)}
+                  onPress={() => navigation.navigate('Restaurant', {
+                     item,
+                     currentLocation
+                  })}
                   getCategoryNameById={getCategoryNameById}
                />
             )}

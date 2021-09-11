@@ -10,7 +10,6 @@ import Tabs from './navigation/tabs';
 
 import {
   Restaurant,
-  Home,
   OrderDelivery
 } from './screens/Index';
 
